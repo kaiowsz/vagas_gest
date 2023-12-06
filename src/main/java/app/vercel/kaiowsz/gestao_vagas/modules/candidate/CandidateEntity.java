@@ -13,14 +13,12 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@Entity(name = "candidate")
 // @Data to setters and getters in once;
 
+@Data
+@Entity(name = "candidate")
 public class CandidateEntity {
     
     @NotBlank(message = "O campo nome é obrigatório.")
