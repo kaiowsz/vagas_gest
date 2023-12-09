@@ -1,5 +1,6 @@
 package app.vercel.kaiowsz.gestao_vagas.modules.candidate.controllers;
 import app.vercel.kaiowsz.gestao_vagas.modules.candidate.CandidateEntity;
+import app.vercel.kaiowsz.gestao_vagas.modules.candidate.dto.ProfileCandidateResponseDTO;
 import app.vercel.kaiowsz.gestao_vagas.modules.candidate.useCases.CreateCandidateUseCase;
 import app.vercel.kaiowsz.gestao_vagas.modules.candidate.useCases.ListAllJobsByFilterUseCase;
 import app.vercel.kaiowsz.gestao_vagas.modules.candidate.useCases.ProfileCandidateUseCase;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
@@ -55,6 +57,18 @@ public class CandidateController {
 
     @GetMapping("/")
     @PreAuthorize("hasRole('CANDIDATE')")
+    @Tag(name = "Candidato", description = "Informações do candidato.")
+    @Operation(summary = "Perfil do candidato",
+        description = "Essa função é responsável por buscar as informações do perfil do candidato."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = ProfileCandidateResponseDTO.class))
+        }),
+        @ApiResponse(responseCode = "400")
+    })
+    
+    @SecurityRequirement(name = "jwt_auth")
     public ResponseEntity<Object> get(HttpServletRequest request) {
         
         var idCandidate = request.getAttribute("candidate_id");
@@ -71,7 +85,7 @@ public class CandidateController {
 
     @GetMapping("/job")
     @PreAuthorize("hasRole('CANDIDATE')")
-    @Tag(name = "Candidato", description = "Informações do Candidato")
+    @Tag(name = "Candidato", description = "Informações do candidato")
     @Operation(summary = "Listagem de vagas disponíveis para o candidato.", description = "Função que lista todas as vagas disponíveis para o candidato, com base no filtro.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", content = {
@@ -80,6 +94,7 @@ public class CandidateController {
             )
         })
     })
+    @SecurityRequirement(name = "jwt_auth")
     public List<JobEntity> findJobByFilter(@RequestParam String filter) {
         return listAllJobsByFilterUseCase.execute(filter);
     }
